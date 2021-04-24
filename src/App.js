@@ -1,25 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { Face } from './components/Face';
+import { range } from 'd3';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const width = 166;
+const height = 166;
+const array = range(3*6);
 
-export default App;
+export const App = () => array.map(() => (
+    <Face
+        width={width}
+        height={height}
+        centerX={width / 2}
+        centerY={height / 2}
+        strokeWidth={10}
+        eyeOffsetX={30}
+        eyeOffsetY={30}
+        eyeRadius={5 + Math.random() * 10}
+        mouthRadius={7 + Math.random() * 9}
+        mouthWidth={2 + Math.random() * 10}
+    />
+));
