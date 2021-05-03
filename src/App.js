@@ -1,5 +1,5 @@
 import React from 'react';
-import { scaleBand, scaleLinear, max, format } from 'd3'; 
+import { scaleLinear, scaleTime, timeFormat, extent } from 'd3'; 
 import { useData } from './useData';
 import { AxisBottom } from './components/AxisBottom';
 import { AxisLeft } from './components/AxisLeft';
@@ -14,9 +14,7 @@ const margin = {
   left: 220
 };
 
-const xAxisTickFormat = (n) => (
-  format(".4s")(n).replace('G', 'B')
-)
+const xAxisTickFormat = timeFormat("%a");
 
 export const App = () => {
   const data = useData();
@@ -28,20 +26,21 @@ export const App = () => {
 
   const innerHeight = height - margin.top - margin.bottom;
   const innerWidth = width - margin.left - margin.right;
-  const yValue = (d) => d.Country;
-  const xValue = (d) => d.Population;
+  const xValue = (d) => d.timestamp;
+  const xAxisLabel = 'Timestamp';
+  const yValue = (d) => d.temperature;
+  const yAxisLabel = 'Temperature';
+  const yAxisLabelOffset = 50
 
-  const yScale = scaleBand()
-    .domain(data.map(yValue))
-    .range([0, innerHeight])
-    .paddingInner(0.2);
-
-  const xScale = scaleLinear()
-    .domain([0, max(data, xValue)])
+  const xScale = scaleTime()
+    .domain(extent(data, xValue))
     .range([0, innerWidth])
+    .nice()
 
-    console.log(xScale.ticks())
-
+  const yScale = scaleLinear()
+    .domain(extent(data, yValue))
+    .range([innerHeight, 0])
+    .nice()
 
   return (
     <svg width={width} height={height}>
@@ -51,10 +50,20 @@ export const App = () => {
           innerHeight={innerHeight}
           tickFormat={xAxisTickFormat}
         />
+        <text 
+          textAnchor={'middle'} 
+          fontSize={'2em'} 
+          x={-yAxisLabelOffset} 
+          y={innerHeight / 2}
+          transform={`translate(${-yAxisLabelOffset-200},${innerHeight / 2}) rotate(-90)`}
+        >
+          {yAxisLabel}
+        </text>
         <AxisLeft
           yScale={yScale}
+          innerWidth={innerWidth}
         />
-        <text textAnchor={'middle'} fontSize={'2em'} x={innerWidth / 2} y={innerHeight+60}>Population</text>
+        <text textAnchor={'middle'} fontSize={'2em'} x={innerWidth / 2} y={innerHeight+60}>{xAxisLabel}</text>
         <Marks
           data={data}
           xScale={xScale}
