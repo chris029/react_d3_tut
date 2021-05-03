@@ -1,5 +1,5 @@
 import React from 'react';
-import { scaleLinear, format, extent } from 'd3'; 
+import { scaleLinear, scaleTime, timeFormat, extent } from 'd3'; 
 import { useData } from './useData';
 import { AxisBottom } from './components/AxisBottom';
 import { AxisLeft } from './components/AxisLeft';
@@ -14,9 +14,7 @@ const margin = {
   left: 220
 };
 
-const xAxisTickFormat = (n) => (
-  format(".4s")(n).replace('G', 'B')
-)
+const xAxisTickFormat = timeFormat("%a");
 
 export const App = () => {
   const data = useData();
@@ -28,20 +26,21 @@ export const App = () => {
 
   const innerHeight = height - margin.top - margin.bottom;
   const innerWidth = width - margin.left - margin.right;
-  const xValue = (d) => d.sepal_length;
-  const xAxisLabel = 'Sepal Length';
-  const yValue = (d) => d.sepal_width;
-  const yAxisLabel = 'Sepal Width';
+  const xValue = (d) => d.timestamp;
+  const xAxisLabel = 'Timestamp';
+  const yValue = (d) => d.temperature;
+  const yAxisLabel = 'Temperature';
   const yAxisLabelOffset = 50
 
-  const xScale = scaleLinear()
+  const xScale = scaleTime()
     .domain(extent(data, xValue))
     .range([0, innerWidth])
     .nice()
 
   const yScale = scaleLinear()
     .domain(extent(data, yValue))
-    .range([0, innerHeight])
+    .range([innerHeight, 0])
+    .nice()
 
   return (
     <svg width={width} height={height}>
