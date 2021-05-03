@@ -3,7 +3,7 @@ export const Marks = ({ data, xScale, yScale, xValue, yValue, tooltipFormat }) =
         <circle className="mark"
           cx={xScale(xValue(d))}
           cy={yScale(yValue(d))}
-          r={10}
+          r={5}
         >
         <title>{tooltipFormat(xValue(d))}</title>
         </circle>
